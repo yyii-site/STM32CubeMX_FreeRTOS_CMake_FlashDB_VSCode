@@ -1,0 +1,8 @@
+{
+    "cmake.generator": "Ninja",
+    "cmake.configureEnvironment": {
+        "PATH": "${env:HOME}/.local/share/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin:${env:PATH}"
+    },
+    "cortex-debug.variableUseNaturalFormat": true
+}
+

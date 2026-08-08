@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "cwd": "${workspaceFolder}",
+            // 自动联动：获取 CMake 刚刚编译出来的最新的 .elf 文件
+            "executable":"${command:cmake.launchTargetPath}",
+            "name": "Debug with OpenOCD",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                // "interface/cmsis-dap.cfg",          // 调试器选择 CMSIS-DAP
+                "interface/stlink.cfg",             // 调试器选择 ST-LINK
+                "target/stm32f4x.cfg"               // 目标芯片选择 stm32f4
+            ],
+            "armToolchainPath": "${env:HOME}/.local/share/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin",
+            "searchDir": [],
+            "runToEntryPoint": "main",              // 烧录成功后，自动停在 main 函数第一行
+            "showDevDebugOutput": "none"            // 隐藏 OpenOCD 繁杂的底层通信日志，保持终端干净
+        }
+    ]
+}
