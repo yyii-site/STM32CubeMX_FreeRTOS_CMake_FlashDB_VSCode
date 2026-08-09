@@ -30,7 +30,6 @@ target_sources(flashdb_stack PRIVATE
     # 本地 ports 适配文件
     ${CMAKE_CURRENT_SOURCE_DIR}/ports/sfud_port.c
     ${CMAKE_CURRENT_SOURCE_DIR}/ports/fal_flash_sfud_port.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/ports/drv_spi_flash.c
     ${CMAKE_CURRENT_SOURCE_DIR}/ports/app_flashdb.c
 )
 

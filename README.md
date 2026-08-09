@@ -359,3 +359,18 @@ int main(void) {
 
 * **Windows**：推荐使用 **VOFA+**（界面极佳、支持画波形）、**SSCOM** 或 **MobaXterm**。
 * **Linux / macOS**：推荐使用 **cutecom** 或终端命令 `picocom -b 115200 /dev/ttyUSB0`。
+
+### 7.4 串口信息
+
+```
+[FlashDB][kv][env][fdb_kvdb1] (/home/yi/Code/stm32/stm32f401_flashdb/Middlewares/Third_Party/FlashDB/src/fdb_kvdb.c:1573) Sector header info is incorrect. Auto format this sector (0x000FF000).
+[FlashDB][kv][env][fdb_kvdb1] All sector header is incorrect. Set it to default.
+[FlashDB] FlashDB V2.2.99 is initialize success.
+[FlashDB] You can get the latest version on https://github.com/armink/FlashDB .
+[FlashDB][tsl][log][fdb_tsdb1] Sector (0x00000000) header info is incorrect.
+[FlashDB][tsl][log][fdb_tsdb1] All sector format finished.
+[FlashDB][tsl][log][fdb_tsdb1] (/home/yi/Code/stm32/stm32f401_flashdb/Middlewares/Third_Party/FlashDB/src/fdb_tsdb.c:1074) TSDB (log) oldest sectors is 0x00000000, current using sector is 0x00000000.
+========================================
+FlashDB 自检测试: 当前开机计数 = 1
+========================================
+```

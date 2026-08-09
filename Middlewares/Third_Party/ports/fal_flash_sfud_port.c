@@ -38,20 +38,11 @@ struct fal_flash_dev nor_flash0 =
 
 static int init(void)
 {
-
-#ifdef RT_USING_SFUD
-    /* RT-Thread RTOS platform */
-    sfud_dev = rt_sfud_flash_find_by_dev_name(FAL_USING_NOR_FLASH_DEV_NAME);
-#else
-    /* bare metal platform */
-    extern sfud_flash sfud_norflash0;
-    sfud_dev = &sfud_norflash0;
-#endif
-
     /* 在 FAL 驱动初始化时，主动触发 SFUD 的初始化 */
     if (sfud_init() == SFUD_SUCCESS) {
-        /* sfud_init 成功后，SFUD 内部已经将 init_ok 置为了 true */
-        return 0;
+        sfud_dev = sfud_get_device(0);
+    } else {
+        return -1;
     }
 
     if (NULL == sfud_dev)
