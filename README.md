@@ -2,7 +2,13 @@
 
 本项目基于 **STM32CubeMX** + **CMake** + **FreeRTOS** 构建，使用 **Git Submodule** 引入第三方开源存储组件 **SFUD**、**FAL** 与 **FlashDB**，实现了在外置 SPI Flash（W25Q32，4MB）上高效管理 KV 键值对与 TSDB 时序数据库。
 
-项目工程需要 STM32CubeMX 打开 stm32f401_flashdb.ioc 生成。所以项目仅会上传必要文件。
+工程需要 STM32CubeMX 打开 stm32f401_flashdb.ioc 生成。所以项目仅会上传必要文件。
+
+测试开发板资料：https://github.com/weactstudio/weactstudio.ministm32f4x1
+
+淘宝购买开发板 + 补焊 25Q32JVSIQ
+
+项目架构和代码内容以实际为准，说明文档有时候会忘记更新。
 
 ---
 
@@ -21,7 +27,6 @@
 │   ├── FAL/                            # [Git Submodule] FAL Flash 抽象层
 │   ├── FlashDB/                        # [Git Submodule] FlashDB 数据库
 │   ├── ports/                          # 本地硬件适配与接口配置层 (手动维护)
-│   │   ├── drv_spi_flash.c             # 设置存储芯片
 │   │   ├── sfud_cfg.h                  # SFUD 参数配置文件
 │   │   ├── sfud_port.c                 # SFUD 与 STM32 SPI HAL 库对接
 │   │   ├── fal_cfg.h                   # FAL 分区表与设备注册
@@ -93,16 +98,16 @@ git submodule add https://github.com/armink/FlashDB.git Middlewares/Third_Party/
 
 ```
 
-### 3.2 配置 SFUD (`drv_spi_flash.c` & `sfud_cfg.h` & `sfud_port.c`)
+### 3.2 配置 SFUD (`sfud_cfg.h` & `sfud_port.c`)
 
-* 在 `drv_spi_flash.c` 和 `sfud_cfg.h` 中定义存储芯片型号
+* 在 `sfud_cfg.h` 中定义存储芯片型号
 
 * 在 `sfud_port.c` 中实现 `sfud_spi_port_init()`，使用 `HAL_SPI_Transmit` / `HAL_SPI_Receive` 完成底层 SPI 收发及 CS 片选控制。这部分内容在task中运行，比 stm32cubemx 生成spi初始化的接口晚，所以自动生成的 MX_SPI1_Init 会被覆盖。
 
 ### 3.3 配置 FAL (`fal_cfg.h` & `fal_flash_sfud_port.c`)
 
-* 在 `fal_cfg.h` 中划分 W25Q32 的 4MB 空间（例如：前 1MB 分给 `kvdb`，后 1MB 分给 `tsdb`）。
-* 在 `fal_flash_sfud_port.c` 中将 `init` 接口重定向调用 `sfud_init()` （对比官方实例需要增加此段代码）。
+* 在 `fal_cfg.h` 中划分 W25Q32 的 4MB 空间（例如： 1MB 分给 `kvdb`， 1MB 分给 `tsdb`）。
+* 在 `fal_flash_sfud_port.c` 中将 `init` 接口重定向调用 `sfud_init()` （对比官方例成需要增加此段代码）。
 
 ### 3.4 配置 FlashDB (`fdb_cfg.h` & `app_flashdb.c/h`)
 
@@ -119,9 +124,9 @@ git submodule add https://github.com/armink/FlashDB.git Middlewares/Third_Party/
 ```cmake
 add_library(flashdb_stack STATIC)
 
-# # 1. 头文件包含路径
+# 1. 包含路径 (根据 fal 仓库实际结构更新)
 target_include_directories(flashdb_stack PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/ports   # 放在首位，覆盖子模块默认配置，确保优先加载本地自定义配置文件
+    ${CMAKE_CURRENT_SOURCE_DIR}/ports         # 必须放在首位，覆盖子模块默认配置
     ${CMAKE_CURRENT_SOURCE_DIR}/SFUD/sfud/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/fal/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/FlashDB/inc
@@ -147,7 +152,6 @@ target_sources(flashdb_stack PRIVATE
     # 本地 ports 适配文件
     ${CMAKE_CURRENT_SOURCE_DIR}/ports/sfud_port.c
     ${CMAKE_CURRENT_SOURCE_DIR}/ports/fal_flash_sfud_port.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/ports/drv_spi_flash.c
     ${CMAKE_CURRENT_SOURCE_DIR}/ports/app_flashdb.c
 )
 
@@ -244,7 +248,7 @@ int _write(int file, char *ptr, int len) {
 
 ```
 
-记得修改路径
+记得修改路径和下载器型号
 
 ### 5.3 绑定交叉工具链 (`.vscode/settings.json`)
 
